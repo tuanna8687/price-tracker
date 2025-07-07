@@ -1,0 +1,100 @@
+# Development container with all tools needed
+FROM node:22-bookworm
+
+# Set the maintainer label
+LABEL maintainer="Price Tracker Development Team"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    # Essential build tools
+    build-essential \
+    # Python for node-gyp
+    python3 \
+    python3-pip \
+    # Git for version control
+    git \
+    # Curl and wget for downloads
+    curl \
+    wget \
+    # Text editors
+    nano \
+    vim \
+    # Process management
+    procps \
+    # Network tools
+    net-tools \
+    iputils-ping \
+    # SSL certificates
+    ca-certificates \
+    # GPG for package verification
+    gnupg \
+    # PostgreSQL client
+    postgresql-client \
+    # Redis client
+    redis-tools \
+    # Dependencies for Chrome
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    libxss1 \
+    libgconf-2-4 \
+    libxtst6 \
+    libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Chrome for Puppeteer
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install global Node.js development tools
+RUN npm install -g \
+    @angular/cli@latest \
+    @nestjs/cli@latest \
+    typescript@latest \
+    ts-node@latest \
+    nodemon@latest \
+    npm-check-updates@latest \
+    eslint@latest \
+    prettier@latest \
+    pm2@latest
+
+# Install Docker CLI for Docker-in-Docker scenarios
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -y docker-ce-cli \
+    && rm -rf /var/lib/apt/lists/*
+
+# Use the existing node user instead of creating a new one
+# The node user already exists with UID/GID 1000
+
+# Set up workspace directory
+WORKDIR /workspace
+
+# Change ownership of workspace to node user
+RUN chown -R node:node /workspace
+
+# Switch to node user
+USER node
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV PATH=/workspace/node_modules/.bin:$PATH
+
+# Expose common development ports
+EXPOSE 3000 4000 4200 9229
+
+# Default command
+CMD ["tail", "-f", "/dev/null"]
