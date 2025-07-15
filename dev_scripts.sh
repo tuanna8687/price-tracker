@@ -94,7 +94,7 @@ case "$1" in
     
     "dev-backend")
         echo "🚀 Starting backend development server..."
-        docker exec -it price-tracker-dev bash -c "cd /workspace/backend && npm run start:dev"
+        docker exec -it price-tracker-dev bash -c "export PORT=4000 && cd /workspace/backend && npm run start:dev"
         ;;
     
     "dev-frontend")

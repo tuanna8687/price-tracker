@@ -12,8 +12,8 @@ services:
       # Mount entire project directory
       - .:/workspace
       # Named volume for node_modules to improve performance
-      - node_modules_backend:/workspace/backend/node_modules
-      - node_modules_frontend:/workspace/frontend/node_modules
+      #- node_modules_backend:/workspace/backend/node_modules
+      #- node_modules_frontend:/workspace/frontend/node_modules
       # Mount Docker socket for Docker-in-Docker scenarios
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -22,16 +22,16 @@ services:
       - "4200:4200"   # Alternative Angular port
       - "9229:9229"   # Node.js debugging port
     environment:
-      - NODE_ENV=development
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=pricetracker_dev
-      - DB_USER=devuser
-      - DB_PASSWORD=devpass123
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+      - NODE_ENV=${NODE_ENV:-development}
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=${DB_NAME:-pricetracker_dev}
+      - DB_USER=${DB_USER:-devuser}
+      - DB_PASSWORD=${DB_PASSWORD:-devpass123}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-true}
+      - PUPPETEER_EXECUTABLE_PATH=${PUPPETEER_EXECUTABLE_PATH:-/usr/bin/google-chrome}
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,7 +39,6 @@ services:
         condition: service_started
     networks:
       - price-tracker-network
-    # Keep container running for development
     command: tail -f /dev/null
 
   # PostgreSQL Database
@@ -47,17 +46,17 @@ services:
     image: postgres:14-alpine
     container_name: price-tracker-postgres
     environment:
-      POSTGRES_DB: pricetracker_dev
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: devpass123
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+      POSTGRES_DB: ${DB_NAME:-pricetracker_dev}
+      POSTGRES_USER: ${DB_USER:-devuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-devpass123}
+      POSTGRES_INITDB_ARGS: ${POSTGRES_INITDB_ARGS:---encoding=UTF8 --lc-collate=C --lc-ctype=C}
     ports:
       - "5433:5432"  # External port to avoid conflicts
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U devuser -d pricetracker_dev"]
+      test: [ "CMD-SHELL", "pg_isready -U devuser -d pricetracker_dev" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -75,7 +74,7 @@ services:
       - ./docker/development/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -89,7 +88,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ADMINER_DEFAULT_SERVER: postgres
+      - ADMINER_DEFAULT_SERVER=${DB_HOST:-postgres}
     depends_on:
       - postgres
     networks:
@@ -100,7 +99,7 @@ services:
     image: rediscommander/redis-commander:latest
     container_name: price-tracker-redis-commander
     environment:
-      REDIS_HOSTS: local:redis:6379
+      - REDIS_HOSTS=local:${REDIS_HOSTS:-redis}:${REDIS_PORT:-6379}
     ports:
       - "8081:8081"
     depends_on:

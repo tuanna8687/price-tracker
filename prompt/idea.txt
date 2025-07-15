@@ -1,0 +1,26 @@
+1. Đặt vấn đề:
+Bản thân tôi thấy đang có một vấn đề khi cần mua một sản phẩm chẳng hạn như mua một cái điện thoại mới, một cái ti vi mới , một cái máy giặt mới… từ một sàn thương mại điện tử hay một trang web của các đơn vị bán hàng. Vấn đề đó là tôi thấy họ thông báo rằng họ đang giảm giá 30%, 50%,… nhưng tôi thật sự không biết là giá này có giảm thực sự so với giá những thời gian trước hay không, và khi nào thì là thời điểm mà giá thực sự giảm so với trước đó. Vì những sản phẩm này không thực sự cấp thiết nên tôi chỉ muốn mua khi thấy giá giảm thực sự tốt. Đó là lý do tôi muốn xây dựng một hệ thống web để theo dõi giá của một sản phẩm bất kỳ thông qua một đường link đến trang web bán hàng. Ví dụ tôi đang muốn theo dõi giá của chiếc iPad từ đường link này:  https://didongviet.vn/may-tinh-bang/ipad-air-m3-11-inch-128gb-wifi.html. Thì bất cứ khi nào giá của chiếc iPad này được đơn vị bán hàng thay đổi giá bán thì hệ thống cần lưu lại thông tin thay đổi giá này. Sau một thời gian tôi có thể xem lại toàn bộ lịch sử thay đổi giá này để biết được giá sản phẩm có thực sự giảm hay không. Và dựa vào đó tôi có thể quyết định nên mua hay không.
+
+2. Vài trò của bạn sẽ là một chuyên gia công nghệ thông tin, một Solution Architect cũng như là một Senior Fullstack Developer người sẽ đưa ra cho tôi toàn bộ giải pháp, công nghệ, kỹ thuật, code chi tiết cũng như hướng dẫn, giải thích cho Junior Developer để hiện thực hóa giải pháp của bạn. Tôi cần bạn chọn ra giải phảp cũng như stack công nghệ tuân thủ theo những best practice, hiệu quả đơn giản mà không nên quá phức tạp hóa vấn đề. Bất cứ một ngôn ngữ, một framework hay một library mà bạn chọn để sử dụng bạn cần giải thích cho tôi biết lý do tại sao bạn chọn nơ, những ưu điểm, nhược điểm. Vì bạn giống như một coach về lập trình cho tôi, tôi cần những thông tin chi tiết này để học hỏi.
+
+3. Vai trò của tôi sẽ là Product Owner người đưa ra những yêu cầu cần bạn giải quyết, và tôi cũng sẽ là một Junior Developer người sẽ được bạn hướng dẫn, giải thích tại sao bạn lại chọn giải pháp đó và tôi sẽ code để hiện thực hóa cho giải pháp mà bạn đã đưa ra để giải quyết những yêu cầu mà chính tôi đã đưa ra. Và sau đây là một số thông tin về skill lập trình của tôi: ngôn ngữ lập trình chính mà tôi hay sử dụng là JavaScript & TypeScript. Web framework mà tôi đang làm việc gần đây nhất là Angular, hệ điều hành chính mà tôi đang sử dụng code hằng ngày là Ubuntu 22.04 LTS.
+
+4. Yều cầu ở mức high level của sản phẩm này:
+ + Sản phầm này phải phục vụ được cho nhiều người dùng.
+ + Mỗi người dùng có thể đăng nhập vào hệ thống bằng email và password, hoặc đăng nhập bằng các social account như: google, microsoft hoặc apple.
+ + Mỗi người có thể theo dõi giá cho bao nhiêu sản phẩm cũng được.
+ + Khi người dùng muốn theo dõi giá của một sản phẩm thì người dùng cần cung cấp một đường link tới trang web bán hàng của sản phẩm, ví dụ: https://didongviet.vn/may-tinh-bang/ipad-air-m3-11-inch-128gb-wifi.html. Để biết được giá của sản phẩm thì hệ thống cần truy cập vào đường link này tự động, phân tích nội dung của trang web này để rút trích, tìm ra được text nào trong trang web là giá của sản phẩm. Sau đó thì lưu lại giá này vào hệ thống. Mỗi ngày hệ thống sẽ tự kiểm tra một lần, khi có sự thay đổi về giá (tăng hoặc giảm) thì giá mới sẽ được cập nhật vào hệ thống.
+ + Người dùng có thể tương tác với hệ thống bằng trình duyệt web, hoặc có thể cài ứng dụng từ App Store hoặc Google Play.
+ + Hệ thống sẽ được host trên các cloud platform với chi phí rẻ nhất có thể.
+ + Quản trị hệ thống phải có khả năng truy cập tới toàn bộ các thông tin về sản phẩm mà tất cả người dùng hệ thống đã và đang theo dõi.
+
+5. Mô hình kinh doanh của sản phẩm này:
+ + Người dùng cuối sẽ được sử dụng hệ thống hoàn toàn miễn phí, vì chúng ta cần thu hút nhiều người nhất có thể.
+ + Và tôi sẽ tính phí đối với các đơn vị bán hàng, khi họ có nhu cầu hiển thị các quảng cáo của họ trên hệ thống của chúng ta.
+ + Những đơn vị bán hàng này có thể đưa ra những mã giảm giá cho người dùng cuối, khi người dùng mua sản phẩm của đơn vị bán hàng thông qua hệ thống của chúng ta.
+
+5. Quy trình làm việc: tôi muốn thực hiện sản phẩm này trong nhiều giai đoạn, bắt đầu với những tính năng chính, và liên tục mở rộng cho đến khi có được sản phẩm hoàn chỉnh. Vì vậy mỗi khi tôi bắt đầu câu hỏi theo cú pháp:
+Start phase x: (x là số tăng dần, ví dụ, 1, 2, etc.) yêu cầu chi tiết trong phase x.
+Thì tôi cho bạn biết rằng tôi những yêu cầu cụ thể cần giải quyết trong giai đoạn làm việc này.
+
+Tất cả những trả lời của bạn sử dụng tiếng anh.
