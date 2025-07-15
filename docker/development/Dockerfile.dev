@@ -32,6 +32,8 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     # Redis client
     redis-tools \
+    # Sudo for user management
+    sudo \
     # Dependencies for Chrome
     fonts-liberation \
     libappindicator3-1 \
@@ -72,19 +74,22 @@ RUN npm install -g \
 
 # Install Docker CLI for Docker-in-Docker scenarios
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
-    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" > /etc/apt/sources.list.d/docker.list \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" > /etc/apt/sources.list.d/docker.list \
     && apt-get update \
     && apt-get install -y docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
 
-# Use the existing node user instead of creating a new one
-# The node user already exists with UID/GID 1000
+# Use the existing node user (UID 1001) which matches your host user
+# Add node user to sudo group for development convenience
+RUN usermod -aG sudo node \
+    && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Set up workspace directory
 WORKDIR /workspace
 
-# Change ownership of workspace to node user
-RUN chown -R node:node /workspace
+# Give node user full ownership and permissions to workspace
+RUN chown -R node:node /workspace \
+    && chmod -R 755 /workspace
 
 # Switch to node user
 USER node

@@ -9,6 +9,12 @@ PROJECT_NAME="price-tracker"
 COMPOSE_FILE="docker-compose.dev.yml"
 
 case "$1" in
+    "build")
+        echo "🚀 Building Price Tracker development environment..."
+        docker-compose -f $COMPOSE_FILE build --no-cache
+        echo "✅ Development environment built!"
+        ;;
+
     "start")
         echo "🚀 Starting Price Tracker development environment..."
         docker-compose -f $COMPOSE_FILE up -d

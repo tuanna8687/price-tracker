@@ -1,0 +1,12 @@
+Here is my project:
+/price-tracker/dev_script.sh
+/price-tracker/docker-compose.dev.yml
+/price-tracker/docker/development/Dockerfile.dev
+
+I ran ./dev_script.sh build success.
+I run ./dev_script.sh start success.
+
+And then I try to create the frontend by ./dev_script.sh create-frontend. I got the following errors:
+⠹ Installing packages (npm)...npm error code EACCES
+npm error syscall mkdir
+npm error path /workspace/frontend/node_modules/@angular
