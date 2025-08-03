@@ -1,0 +1,126 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <mat-card class="auth-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="auth-icon">trending_down</mat-icon>
+          Welcome Back
+        </mat-card-title>
+        <mat-card-subtitle>
+          Sign in to track your favorite products
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="your@email.com"
+              [class.is-invalid]="isFieldInvalid('email')"
+            >
+            <mat-icon matSuffix>email</mat-icon>
+            @if (isFieldInvalid('email')) {
+              <mat-error>
+                @if (loginForm.get('email')?.errors?.['required']) {
+                  Email is required
+                }
+                @if (loginForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Enter your password"
+              [class.is-invalid]="isFieldInvalid('password')"
+            >
+            <button
+              type="button"
+              matSuffix
+              mat-icon-button
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="'Hide password'"
+            >
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (isFieldInvalid('password')) {
+              <mat-error>
+                @if (loginForm.get('password')?.errors?.['required']) {
+                  Password is required
+                }
+                @if (loginForm.get('password')?.errors?.['minlength']) {
+                  Password must be at least 6 characters
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Error Message -->
+          @if (authService.error()) {
+            <div class="error-message">
+              <mat-icon>error</mat-icon>
+              {{ authService.error() }}
+            </div>
+          }
+
+          <!-- Submit Button -->
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="full-width auth-submit-btn"
+            [disabled]="loginForm.invalid || authService.isLoading()"
+          >
+            @if (authService.isLoading()) {
+              <mat-spinner diameter="20" color="accent"></mat-spinner>
+              Signing in...
+            } @else {
+              <mat-icon>login</mat-icon>
+              Sign In
+            }
+          </button>
+        </form>
+
+        <mat-divider class="auth-divider"></mat-divider>
+
+        <!-- Social Login Buttons (Future Phase) -->
+        <div class="social-auth">
+          <p class="social-auth-text">Or continue with</p>
+          <div class="social-buttons">
+            <button mat-stroked-button class="social-btn" disabled>
+              <mat-icon svgIcon="google"></mat-icon>
+              Google
+            </button>
+            <button mat-stroked-button class="social-btn" disabled>
+              <mat-icon>microsoft</mat-icon>
+              Microsoft
+            </button>
+          </div>
+          <p class="coming-soon">Social login coming soon!</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="auth-actions">
+        <p class="auth-link-text">
+          Don't have an account?
+          <a routerLink="/auth/register" class="auth-link">Sign up here</a>
+        </p>
+        <a routerLink="/auth/forgot-password" class="forgot-password-link">
+          Forgot your password?
+        </a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

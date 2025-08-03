@@ -1,0 +1,186 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <mat-card class="auth-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="auth-icon">person_add</mat-icon>
+          Create Account
+        </mat-card-title>
+        <mat-card-subtitle>
+          Join us to start tracking your favorite products
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- Name Fields -->
+          <div class="name-fields">
+            <mat-form-field appearance="outline" class="name-field">
+              <mat-label>First Name</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="firstName"
+                placeholder="John"
+                [class.is-invalid]="isFieldInvalid('firstName')"
+              >
+              <mat-icon matSuffix>person</mat-icon>
+              @if (isFieldInvalid('firstName')) {
+                <mat-error>First name is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="name-field">
+              <mat-label>Last Name</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="lastName"
+                placeholder="Doe"
+                [class.is-invalid]="isFieldInvalid('lastName')"
+              >
+              @if (isFieldInvalid('lastName')) {
+                <mat-error>Last name is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="your@email.com"
+              [class.is-invalid]="isFieldInvalid('email')"
+            >
+            <mat-icon matSuffix>email</mat-icon>
+            @if (isFieldInvalid('email')) {
+              <mat-error>
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  Email is required
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Create a strong password"
+              [class.is-invalid]="isFieldInvalid('password')"
+            >
+            <button
+              type="button"
+              matSuffix
+              mat-icon-button
+              (click)="togglePasswordVisibility()"
+            >
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (isFieldInvalid('password')) {
+              <mat-error>
+                @if (registerForm.get('password')?.errors?.['required']) {
+                  Password is required
+                }
+                @if (registerForm.get('password')?.errors?.['minlength']) {
+                  Password must be at least 8 characters
+                }
+                @if (registerForm.get('password')?.errors?.['pattern']) {
+                  Password must contain uppercase, lowercase, number and special character
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Confirm Password Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <input
+              matInput
+              [type]="hideConfirmPassword() ? 'password' : 'text'"
+              formControlName="confirmPassword"
+              placeholder="Confirm your password"
+              [class.is-invalid]="isFieldInvalid('confirmPassword')"
+            >
+            <button
+              type="button"
+              matSuffix
+              mat-icon-button
+              (click)="toggleConfirmPasswordVisibility()"
+            >
+              <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (isFieldInvalid('confirmPassword')) {
+              <mat-error>
+                @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+                  Please confirm your password
+                }
+                @if (registerForm.errors?.['passwordMismatch']) {
+                  Passwords do not match
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Terms Checkbox -->
+          <mat-checkbox
+            formControlName="acceptTerms"
+            class="terms-checkbox"
+            [class.is-invalid]="isFieldInvalid('acceptTerms')"
+          >
+            I agree to the
+            <a href="#" class="terms-link">Terms of Service</a>
+            and
+            <a href="#" class="terms-link">Privacy Policy</a>
+          </mat-checkbox>
+          @if (isFieldInvalid('acceptTerms')) {
+            <div class="checkbox-error">
+              You must accept the terms and conditions
+            </div>
+          }
+
+          <!-- Error Message -->
+          @if (authService.error()) {
+            <div class="error-message">
+              <mat-icon>error</mat-icon>
+              {{ authService.error() }}
+            </div>
+          }
+
+          <!-- Submit Button -->
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="full-width auth-submit-btn"
+            [disabled]="registerForm.invalid || authService.isLoading()"
+          >
+            @if (authService.isLoading()) {
+              <mat-spinner diameter="20" color="accent"></mat-spinner>
+              Creating Account...
+            } @else {
+              <mat-icon>person_add</mat-icon>
+              Create Account
+            }
+          </button>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions class="auth-actions">
+        <p class="auth-link-text">
+          Already have an account?
+          <a routerLink="/auth/login" class="auth-link">Sign in here</a>
+        </p>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
