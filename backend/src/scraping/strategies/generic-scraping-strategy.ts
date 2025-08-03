@@ -17,7 +17,7 @@ export class GenericScrapingStrategy implements IScrapingStrategy {
     };
   }
 
-  private extractGenericTitle($: cheerio.Root /*cheerio.CheerioAPI*/): string {
+  private extractGenericTitle($: cheerio.CheerioAPI): string {
     const selectors = [
       'h1',
       '.product-title',
@@ -33,7 +33,7 @@ export class GenericScrapingStrategy implements IScrapingStrategy {
     return 'Unknown Product';
   }
 
-  private extractGenericPrice($: cheerio.Root /*cheerio.CheerioAPI*/): number {
+  private extractGenericPrice($: cheerio.CheerioAPI): number {
     const priceSelectors = [
       '[class*="price"]',
       '[class*="cost"]',
@@ -42,17 +42,18 @@ export class GenericScrapingStrategy implements IScrapingStrategy {
 
     for (const selector of priceSelectors) {
       const elements = $(selector);
-      elements.each((_, element) => {
+      elements.each((index, element) => {
         const text = $(element).text();
         const price = this.parsePrice(text);
-        if (price > 1000) return price; // Reasonable price threshold
+        // if (price > 1000) return price; // Reasonable price threshold
+        // return 0;
       });
     }
 
     return 0;
   }
 
-  private extractGenericImage($: cheerio.Root /*cheerio.CheerioAPI*/, baseUrl: string): string {
+  private extractGenericImage($: cheerio.CheerioAPI, baseUrl: string): string {
     const selectors = [
       '.product-image img',
       '.main-image img',

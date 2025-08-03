@@ -16,35 +16,46 @@ import { PriceHistory } from './price-history/entities/price-history.entity';
 
 @Module({
   imports: [
-    // Configuration
+    // ConfigModule - must be first and global
     ConfigModule.forRoot({
-      envFilePath: '.env.development',
+      envFilePath: ['.env.development'],
       isGlobal: true
     }),
 
-    // Database
-    TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USER'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        entities: [User, Product, UserProduct, PriceHistory],
-        synchronize: configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development'
+    // Throttler for rate limiting
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: 60000, // 1 minute
+            limit: 10, // 10 requests per minute
+          },
+        ],
       }),
-      inject: [ConfigService]
     }),
 
-    // Rate limiting
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // 1 minute
-        limit: 100 // 100 requests per minute
-      }
-    ]),
+    // Database TypeORM configuration
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          type: 'postgres',
+          host: configService.get<string>('DB_HOST', 'postgres'),
+          port: configService.get<number>('DB_PORT', 5432),
+          username: configService.get<string>('DB_USER', 'devuser'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME', 'pricetracker_dev'),
+          // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          entities: [User, Product, UserProduct, PriceHistory],
+          synchronize: configService.get<string>('NODE_ENV') !== 'production',
+          logging: configService.get<string>('NODE_ENV') === 'development',
+          ssl: configService.get<string>('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+        };
+      },
+    }),
 
     // Feature modules
     AuthModule,

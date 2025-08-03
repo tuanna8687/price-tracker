@@ -18,7 +18,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     };
   }
 
-  private extractTitle($: cheerio.Root /*cheerio.CheerioAPI*/): string {
+  private extractTitle($: cheerio.CheerioAPI): string {
     const selectors = [
       'h1.product-title',
       '.product-name h1',
@@ -34,7 +34,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     return 'Unknown Product';
   }
 
-  private extractPrice($: cheerio.Root /*cheerio.CheerioAPI*/): number {
+  private extractPrice($: cheerio.CheerioAPI): number {
     const selectors = [
       '.product-price .price',
       '.price-current',
@@ -51,7 +51,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     return 0;
   }
 
-  private extractOriginalPrice($: cheerio.Root /*cheerio.CheerioAPI*/): number | undefined {
+  private extractOriginalPrice($: cheerio.CheerioAPI): number | undefined {
     const selectors = [
       '.product-price .old-price',
       '.price-old',
@@ -67,7 +67,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     return undefined;
   }
 
-  private extractImage($: cheerio.Root /*cheerio.CheerioAPI*/, baseUrl: string): string {
+  private extractImage($: cheerio.CheerioAPI, baseUrl: string): string {
     const selectors = [
       '.product-image img',
       '.product-gallery img',
@@ -84,7 +84,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     return '';
   }
 
-  private checkAvailability($: cheerio.Root /*cheerio.CheerioAPI*/): boolean {
+  private checkAvailability($: cheerio.CheerioAPI): boolean {
     const outOfStockIndicators = [
       'hết hàng',
       'out of stock',
@@ -97,7 +97,7 @@ export class DiDongVietScrapingStrategy implements IScrapingStrategy {
     return !outOfStockIndicators.some(indicator => pageText.includes(indicator));
   }
 
-  private extractDescription($: cheerio.Root /*cheerio.CheerioAPI*/): string {
+  private extractDescription($: cheerio.CheerioAPI): string {
     const selectors = [
       '.product-description',
       '.product-summary',
