@@ -5,6 +5,7 @@ import {Observable, BehaviorSubject, tap, catchError, throwError, map} from 'rxj
 import {User, AuthResponse, LoginRequest, RegisterRequest} from '../models/user.model';
 import {ApiResponse} from '../models/api.model';
 import {environment} from '../../environments/environment';
+import {LocalStorageService} from '../../shared/services/local-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import {environment} from '../../environments/environment';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly localStorage = inject(LocalStorageService);
 
   // Signals for reactive state management
   private readonly _currentUser = signal<User | null>(null);
@@ -153,9 +155,9 @@ export class AuthService {
    * Store tokens in localStorage
    */
   private storeTokens(token: string, refreshToken?: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    this.localStorage.setItem(this.TOKEN_KEY, token);
     if (refreshToken) {
-      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+      this.localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     }
   }
 
@@ -163,15 +165,15 @@ export class AuthService {
    * Get stored token
    */
   getStoredToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.localStorage.getItem(this.TOKEN_KEY);
   }
 
   /**
    * Clear stored tokens
    */
   private clearStoredTokens(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    this.localStorage.removeItem(this.TOKEN_KEY);
+    this.localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
   /**
@@ -205,7 +207,7 @@ export class AuthService {
    * Refresh authentication token
    */
   refreshToken(): Observable<AuthResponse> {
-    const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+    const refreshToken = this.localStorage.getItem(this.REFRESH_TOKEN_KEY);
     if (!refreshToken) {
       this.logout();
       return throwError(() => new Error('No refresh token available'));
